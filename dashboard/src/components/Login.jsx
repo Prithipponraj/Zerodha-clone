@@ -22,11 +22,14 @@ export default function Login() {
   const navigate = useNavigate();
   const { login, user } = useAuth();
 
+  // Get the API base URL from the environment variable
+  const API_URL = import.meta.env.VITE_API_URL;
+
   React.useEffect(() => {
     if (user) {
       navigate("/");
     }
-  }, []);
+  }, [user, navigate]);
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -35,8 +38,9 @@ export default function Login() {
       email: formData.get("email"),
       password: formData.get("password"),
     };
+
     axios
-      .post("https://zerodha-clone-backend-8nlf.onrender.com/user/login", data, {
+      .post(`${API_URL}/user/login`, data, {
         headers: {
           "Content-Type": "application/json",
         },
@@ -74,9 +78,27 @@ export default function Login() {
             Login
           </Typography>
           <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-            {alert.st == true ? <Alert severity="error">{alert.msg}</Alert> : null}
-            <TextField margin="normal" required fullWidth id="email" label="Email Address" name="email" autoComplete="email" autoFocus />
-            <TextField margin="normal" required fullWidth name="password" label="Password" type="password" id="password" autoComplete="current-password" />
+            {alert.st && <Alert severity="error">{alert.msg}</Alert>}
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              id="email"
+              label="Email Address"
+              name="email"
+              autoComplete="email"
+              autoFocus
+            />
+            <TextField
+              margin="normal"
+              required
+              fullWidth
+              name="password"
+              label="Password"
+              type="password"
+              id="password"
+              autoComplete="current-password"
+            />
             <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
               Sign In
             </Button>
