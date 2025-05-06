@@ -37,7 +37,6 @@ app.use((req, res) => {
 
 // Global error handler
 app.use((err, req, res, next) => {
-  console.error(err.stack);
   res.status(err.status || 500).json({ error: err.message || "Internal Server Error" });
 });
 
@@ -45,19 +44,16 @@ app.use((err, req, res, next) => {
 mongoose
   .connect(process.env.MONGO_URL, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => {
-    console.log("Connected to MongoDB");
     app.listen(port, () => {
       console.log(`Server is running on http://localhost:${port}`);
     });
   })
-  .catch((err) => {
-    console.error("Failed to connect to MongoDB:", err);
+  .catch(() => {
+    console.error("Failed to connect to MongoDB");
   });
 
 // Graceful shutdown
 process.on("SIGINT", async () => {
-  console.log("\nShutting down gracefully...");
   await mongoose.connection.close();
-  console.log("MongoDB connection closed");
   process.exit(0);
 });
